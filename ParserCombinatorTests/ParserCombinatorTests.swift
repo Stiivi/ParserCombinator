@@ -20,10 +20,69 @@ class ParserCombinatorTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+
+    func parse<R>(source: [String], _ parser:Parser<String,R>) -> R? {
+        let stream = source.stream("")
+        let result = parser.parse(stream)
+
+        switch result {
+        case .Success(let head, _): return head
+        case .Failure(let error):
+            print("ERROR: \(error)")
+            return nil
+        }
+    }
+
+    func testSucceed() {
+        let parser = succeed("hello")
+        var source = ["something"]
+
+        var result = self.parse(source, parser)
+
+        XCTAssertEqual(result, "hello")
+
+        source = []
+        result = self.parse(source, parser)
+        XCTAssertEqual(result, "hello")
+    }
+
+    func testFail() {
+        let parser: Parser<String, String> = fail("parser error")
+        let source = ["hello"]
+
+        let result = self.parse(source, parser)
+
+        XCTAssertNil(result)
+    }
+
+    func testSatisfy() {
+        let parser = satisfy("parse error") { $0 == "hello" }
+        let validSource = ["hello"]
+        let failedSource = ["good bye"]
+
+        var result: String?
+
+        result = self.parse(validSource, parser)
+        XCTAssertEqual(result, "hello")
+
+        result = self.parse(failedSource, parser)
+        XCTAssertNil(result)
+
+    }
+
+    func testExpect() {
+        let parser = expect("hello")
+        
+        let validSource = ["hello"]
+        let failedSource = ["good bye"]
+
+        var result: String?
+
+        result = self.parse(validSource, parser)
+        XCTAssertEqual(result, "hello")
+
+        result = self.parse(failedSource, parser)
+        XCTAssertNil(result)
     }
     
     func testPerformanceExample() {

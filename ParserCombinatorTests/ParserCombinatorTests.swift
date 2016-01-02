@@ -72,7 +72,7 @@ class ParserCombinatorTests: XCTestCase {
 
     func testExpect() {
         let parser = expect("hello")
-        
+
         let validSource = ["hello"]
         let failedSource = ["good bye"]
 
@@ -83,6 +83,40 @@ class ParserCombinatorTests: XCTestCase {
 
         result = self.parse(failedSource, parser)
         XCTAssertNil(result)
+    }
+
+    func testAlternate() {
+        let parser = alternate(expect("left"), expect("right"))
+        var source = ["left"]
+        var result = self.parse(source, parser)
+
+        XCTAssertEqual(result, "left")
+
+        source = ["right"]
+        result = self.parse(source, parser)
+        XCTAssertEqual(result, "right")
+
+        source = ["up"]
+        result = self.parse(source, parser)
+        XCTAssertNil(result)
+    }
+
+    func testCombine() {
+        let parser = combine(expect("hello"), expect("world"))
+        let source = ["hello", "world"]
+        let result = self.parse(source, parser)
+
+        XCTAssertEqual(result!, ["hello", "world"])
+    }
+
+    func testCombine2() {
+        let parser = combineTo(combine(expect("good"),
+                                     expect("night")),
+                             expect("moon"))
+        let source = ["good", "night", "moon"]
+        let result = self.parse(source, parser)
+
+        XCTAssertEqual(result!, ["good", "night", "moon"])
     }
     
     func testPerformanceExample() {

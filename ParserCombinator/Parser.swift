@@ -23,8 +23,12 @@ public enum ParserError: ErrorType, CustomStringConvertible {
     }
 }
 
+public protocol ResultType {
+    typealias Value
+}
+
 /// Parsing result
-public enum Result<V>: CustomStringConvertible {
+public enum Result<V>: CustomStringConvertible, ResultType {
     public typealias Value = V
     case Failure(ErrorType)
     case Success(Value)

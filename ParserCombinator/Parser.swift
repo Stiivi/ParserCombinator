@@ -30,28 +30,16 @@ public protocol ResultType {
 /// Parsing result
 public enum Result<V>: CustomStringConvertible, ResultType {
     public typealias Value = V
-    case Failure(ErrorType)
-    case Success(Value)
+    case OK(Value)
+    case Fail(String)
+    case Error(String)
 
     public var description: String {
         switch self {
-        case .Failure(let error): return "Error: \(error)"
-        case .Success(let value): return String(value)
+        case .OK(let value): return String(value)
+        case .Fail(let error): return "Fail: \(error)"
+        case .Error(let error): return "Error: \(error)"
         }
-    }
-    public func flatMap<T>(transform: Value -> Result<T>) -> Result<T> {
-        switch self {
-        case .Failure(let error): return Result<T>.Failure(error)
-        case .Success(let value): return transform(value)
-        }
-    }
-}
-
-/// Unwrapping
-public func ??<T>(left: Result<T>, right: Result<T>) -> Result<T> {
-    switch left {
-    case .Success: return left
-    case .Failure: return right
     }
 }
 

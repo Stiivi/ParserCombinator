@@ -10,6 +10,7 @@
 		F86135991C378F2C00A73C43 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86135981C378F2C00A73C43 /* Stream.swift */; };
 		F88FAA6F1C37B771006FE431 /* Recognizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88FAA6E1C37B771006FE431 /* Recognizers.swift */; };
 		F88FAA711C37B77C006FE431 /* Combinators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88FAA701C37B77C006FE431 /* Combinators.swift */; };
+		F8AC75611C38BD5300252C5C /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = F8AC75601C38BD5300252C5C /* README.md */; };
 		F8BDA07C1C3714DF00C904D6 /* ParserCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = F8BDA07B1C3714DF00C904D6 /* ParserCombinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8BDA0831C3714DF00C904D6 /* ParserCombinator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BDA0781C3714DF00C904D6 /* ParserCombinator.framework */; };
 		F8BDA0881C3714DF00C904D6 /* ParserCombinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BDA0871C3714DF00C904D6 /* ParserCombinatorTests.swift */; };
@@ -31,6 +32,7 @@
 		F86135981C378F2C00A73C43 /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
 		F88FAA6E1C37B771006FE431 /* Recognizers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recognizers.swift; sourceTree = "<group>"; };
 		F88FAA701C37B77C006FE431 /* Combinators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Combinators.swift; sourceTree = "<group>"; };
+		F8AC75601C38BD5300252C5C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F8BDA0781C3714DF00C904D6 /* ParserCombinator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ParserCombinator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8BDA07B1C3714DF00C904D6 /* ParserCombinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserCombinator.h; sourceTree = "<group>"; };
 		F8BDA07D1C3714DF00C904D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 		F8BDA06E1C3714DF00C904D6 = {
 			isa = PBXGroup;
 			children = (
+				F8AC75601C38BD5300252C5C /* README.md */,
 				F8BDA07A1C3714DF00C904D6 /* ParserCombinator */,
 				F8BDA0861C3714DF00C904D6 /* ParserCombinatorTests */,
 				F8BDA0791C3714DF00C904D6 /* Products */,
@@ -211,6 +214,7 @@
 			files = (
 				F88FAA711C37B77C006FE431 /* Combinators.swift in Sources */,
 				F8BDA0931C3714EF00C904D6 /* Parser.swift in Sources */,
+				F8AC75611C38BD5300252C5C /* README.md in Sources */,
 				F86135991C378F2C00A73C43 /* Stream.swift in Sources */,
 				F8C747CB1C37A59C0005F263 /* Empty.swift in Sources */,
 				F88FAA6F1C37B771006FE431 /* Recognizers.swift in Sources */,

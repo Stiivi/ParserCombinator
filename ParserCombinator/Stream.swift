@@ -9,7 +9,7 @@
 //
 
 /// Stream
-// Primitive inspired by Swiftz
+//  Inspired by Swiftz
 public struct Stream<Element>: CustomStringConvertible {
     /// Get next element in the stream and the stream representing rest of the
     /// elements
@@ -33,9 +33,8 @@ public struct Stream<Element>: CustomStringConvertible {
     }
 
     public var description: String {
-        return "some stream"
         // TODO: Can't have this here while in Playground, results in infinite recursion
-        // return "[\(self.head), ...]"
+        return "[\(self.head), ...]"
     }
 }
 

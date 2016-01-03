@@ -26,15 +26,20 @@ class ParserCombinatorTests: XCTestCase {
         let result = parser.parse(stream)
 
         switch result {
-        case .Success(let head, _): return head
-        case .Failure(let error):
-            print("ERROR: \(error)")
+        case .OK(let value):
+            let (head, _) = value
+            return head
+        case .Fail(let error):
+            debugPrint("FAIL: \(error)")
+            return nil
+        case .Error(let error):
+            debugPrint("ERROR: \(error)")
             return nil
         }
     }
 
     func testSucceed() {
-        let parser = succeed("hello")
+        let parser: Parser<String, String> = succeed("hello")
         var source = ["something"]
 
         var result = self.parse(source, parser)
@@ -101,24 +106,27 @@ class ParserCombinatorTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    func testCombine() {
-        let parser = combine(expect("hello"), expect("world"))
-        let source = ["hello", "world"]
+    func testThen() {
+        let parser = then(expect("left"), expect("right"))
+        let source = ["left", "right"]
         let result = self.parse(source, parser)
 
-        XCTAssertEqual(result!, ["hello", "world"])
+        XCTAssertEqual(result!.0, "left")
+        XCTAssertEqual(result!.1, "right")
     }
 
-    func testCombine2() {
-        let parser = combineTo(combine(expect("good"),
-                                     expect("night")),
-                             expect("moon"))
-        let source = ["good", "night", "moon"]
-        let result = self.parse(source, parser)
+    func testMany() {
+        let parser = many(expect("la"))
+        var source = ["la", "la", "la"]
 
-        XCTAssertEqual(result!, ["good", "night", "moon"])
+        var result = self.parse(source, parser)
+        XCTAssertEqual(result!, ["la", "la", "la"])
+
+        source = ["la", "la", "bum"]
+        result = self.parse(source, parser)
+        XCTAssertEqual(result!, ["la", "la"])
     }
-    
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {

@@ -12,23 +12,35 @@
 //
 //===----------------------------------------------------------------------===//
 
-func succeed<T>(value: T) -> Parser<T, T> {
-    return Parser { .Success(value, $0) }
+public func succeed<T,O>(value: O) -> Parser<T, O> {
+    return Parser { Result.OK(value, $0) }
 }
 
-func fail<T>(error: String) -> Parser<T, T> {
-    return Parser { _ in .Failure(ParserError.Error(error)) }
+
+public func fail<T,O>(error: String) -> Parser<T, O> {
+    return Parser { _ in Result.Fail(error) }
 }
 
-/*
-satisfy  :: (* -> bool) -> parser * *
-satisfy p []     = fail []
-satisfy p (x:xs) = succeed x xs , p x
-= fail xs      , otherwise
-*/
+
+public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
+    return Parser {
+        input in
+
+        let result = parser.parse(input)
+
+        switch result {
+        case .Fail(let error):
+            return Result.Error(error)
+        default:
+            return result
+        }
+    }
+}
+
+
 /// Recognise single symbol
 /// - Returns: symbol if matches `condition`, otherwise failure
-func satisfy<T: EmptyCheckable>(error: String, _ condition: (T) -> Bool) -> Parser<T,T> {
+public func satisfy<T: EmptyCheckable>(error: String, _ condition: (T) -> Bool) -> Parser<T,T> {
     return Parser {
         input in
         let (head, tail) = (input.head, input.tail)
@@ -46,10 +58,10 @@ func satisfy<T: EmptyCheckable>(error: String, _ condition: (T) -> Bool) -> Pars
     }
 }
 
+
 /// Recognizes symbol with given text
-func expect<T: Equatable>(value: T) -> Parser<T, T>{
+public func expect<T: Equatable>(value: T) -> Parser<T, T>{
     return satisfy("expected \(value)") {
         $0 == value
     }
 }
-

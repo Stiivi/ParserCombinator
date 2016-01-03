@@ -76,6 +76,6 @@ public func expectText<T: CustomStringConvertible>(value: T) -> Parser<T, T>{
 }
 
 
-func item<T>(expectation: String) -> Parser<T, T> {
+public func item<T>(expectation: String) -> Parser<T, T> {
     return satisfy(expectation) { _ in true }
 }

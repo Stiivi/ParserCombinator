@@ -115,6 +115,18 @@ class ParserCombinatorTests: XCTestCase {
         XCTAssertEqual(result!.1, "right")
     }
 
+    func testThenDifferent() {
+        let number = using(expect("1")) { Int($0)! }
+        let string = expect("thing")
+
+        let parser = then(number, string)
+        let source = ["1", "right"]
+        let result = self.parse(source, parser)
+
+        XCTAssertEqual(result!.0, 1)
+        XCTAssertEqual(result!.1, "thing")
+    }
+
     func testMany() {
         let parser = many(expect("la"))
         var source = ["la", "la", "la"]
@@ -130,6 +142,18 @@ class ParserCombinatorTests: XCTestCase {
         result = self.parse(source, parser)
         XCTAssertEqual(result!, [])
     }
+
+    func testThenDifferentMany() {
+        let manya = many(expect("a"))
+
+        let parser = then(expect("l"), manya)
+        let source = ["1", "right"]
+        let result = self.parse(source, parser)
+
+        XCTAssertEqual(result!.0, 1)
+        XCTAssertEqual(result!.1, "thing")
+    }
+
 
     func testSome() {
         let parser = some(expect("la"))

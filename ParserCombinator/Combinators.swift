@@ -18,7 +18,6 @@ public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,
     return Parser {
         input in
         let result = left.parse(input)
-        debugPrint("--- parsed: \(result)")
         if case .OK = result {
             return result
         }

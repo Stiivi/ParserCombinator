@@ -14,21 +14,21 @@ public func >>-<A,B,T>(parser: Parser<T,A>, f: (A->Parser<T,B>)) -> Parser<T,B> 
 
 
 // Traditional
-infix operator <|> { associativity right precedence 130 }
+infix operator <|> { associativity right precedence 110 }
 
 public func <|><T,O>(left: Parser<T,O>, right: Parser<T,O>) -> Parser<T,O> {
     return alternate(left, right)
 }
 
-// Very convenient
-public func |<T,O>(left: Parser<T,O>, right: Parser<T,O>) -> Parser<T,O> {
+// Convenient
+public func ||<T,O>(left: Parser<T,O>, right: Parser<T,O>) -> Parser<T,O> {
     return alternate(left, right)
 }
 
 
-infix operator » { associativity right precedence 130 }
+infix operator => { associativity right precedence 120 }
 
-public func » <T,A,B> (parser: Parser<T,A>, transform: A->B) -> Parser<T,B> {
+public func => <T,A,B> (parser: Parser<T,A>, transform: A->B) -> Parser<T,B> {
     return using(parser, transform)
 }
 

@@ -9,7 +9,7 @@
 /// Concatenates two tuple elements where the tuple represents (head, tail) of 
 /// a list of element type of head.
 /// - Returns: a list of concatenated head with the tail
-func cons<T>(tuple: (T, [T])) -> [T] {
+public func cons<T>(tuple: (T, [T])) -> [T] {
     let (head, tail) = tuple
     return [head] + tail
 }

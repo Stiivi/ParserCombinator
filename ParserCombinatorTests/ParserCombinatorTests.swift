@@ -125,6 +125,26 @@ class ParserCombinatorTests: XCTestCase {
         source = ["la", "la", "bum"]
         result = self.parse(source, parser)
         XCTAssertEqual(result!, ["la", "la"])
+
+        source = ["bum"]
+        result = self.parse(source, parser)
+        XCTAssertEqual(result!, [])
+    }
+
+    func testSome() {
+        let parser = some(expect("la"))
+        var source = ["la", "la", "la"]
+
+        var result = self.parse(source, parser)
+        XCTAssertEqual(result!, ["la", "la", "la"])
+
+        source = ["la", "la", "bum"]
+        result = self.parse(source, parser)
+        XCTAssertEqual(result!, ["la", "la"])
+
+        source = ["bum"]
+        result = self.parse(source, parser)
+        XCTAssertNil(result)
     }
 
     func testPerformanceExample() {

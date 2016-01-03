@@ -121,6 +121,16 @@ public func many<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
     return alternate(some, succeed([O]()))
 }
 
+/**
+ 
+ some :: parser * ** -> parser * [**]
+ some p = (p $then many p) $using cons
+
+*/
+public func some<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
+    return using(then(p, many(p)), cons)
+}
+
 func cons<T>(tuple: (T, [T])) -> [T] {
     let (head, tail) = tuple
     return [head] + tail

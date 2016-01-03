@@ -40,19 +40,20 @@ public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
 
 /// Recognise single symbol
 /// - Returns: symbol if matches `condition`, otherwise failure
-public func satisfy<T: EmptyCheckable>(error: String, _ condition: (T) -> Bool) -> Parser<T,T> {
+public func satisfy<T: EmptyCheckable>(expected: String, _ condition: (T) -> Bool) -> Parser<T,T> {
+    let message = "Expected \(expected)."
     return Parser {
         input in
         let (head, tail) = (input.head, input.tail)
         if head.isEmpty {
-            return fail("Unexpected end of input").parse(tail)
+            return fail("Unexpected end of input. \(message)").parse(tail)
         }
         else {
             if condition(head) {
                 return succeed(head).parse(tail)
             }
             else {
-                return fail(error).parse(tail)
+                return fail(message).parse(tail)
             }
         }
     }
@@ -64,4 +65,17 @@ public func expect<T: Equatable>(value: T) -> Parser<T, T>{
     return satisfy("expected \(value)") {
         $0 == value
     }
+}
+
+
+/// Recognizes symbol with given text
+public func expectText<T: CustomStringConvertible>(value: T) -> Parser<T, T>{
+    return satisfy("expected \(value)") {
+        String($0) == String(value)
+    }
+}
+
+
+func item<T>(expectation: String) -> Parser<T, T> {
+    return satisfy(expectation) { _ in true }
 }

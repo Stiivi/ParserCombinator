@@ -147,6 +147,45 @@ class ParserCombinatorTests: XCTestCase {
         XCTAssertNil(result)
     }
 
+    func testSimpleGrammar() {
+        let parser = §"SAY" ≥ item("greeting") … §"TO" ≥ item("name")
+
+        let source = ["SAY", "Good Night", "TO", "Moon"]
+        let result = self.parse(source, parser)
+
+        XCTAssertEqual(result!.0, "Good Night")
+        XCTAssertEqual(result!.1, "Moon")
+    }
+
+    func testSeparated() {
+        let parser = separated(item("item"), expect(","))
+        var source = ["a", ",", "b", ",", "c"]
+        var result = self.parse(source, parser)
+        XCTAssertEqual(result!, ["a", "b", "c"])
+
+        source = ["a", ",", "b", "=", "c"]
+        result = self.parse(source, parser)
+        XCTAssertEqual(result!, ["a", "b"])
+    }
+
+//    func testExpressions() {
+//        let plus: (Int, Int)->Int = { a, b in a + b}
+//        let minus: (Int, Int)->Int = { a, b in a - b}
+//        let value: (String) -> Int = { a in Int(a)! }
+//
+//        let term = item("number") » value
+//        let expr = ((term … §"+" ≥ term) » plus)
+//                     | ((term … §"-" ≥ term) » minus)
+//                     | term
+//
+//        let source = ["1", "+", "1", "+", "100", "-", "50","-", "1", "-", "1"]
+//
+//        let result = self.parse(source, parser)
+//
+//        XCTAssertEqual(result, 50)
+//
+//    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {

@@ -49,10 +49,16 @@ public enum Result<V>: CustomStringConvertible, ResultType {
 //
 //===----------------------------------------------------------------------===//
 
+protocol ParserType {
+    typealias Input
+    typealias Output
+}
+
 /// The Parser definition
-public struct Parser<T: EmptyCheckable, O> {
-    public typealias Token = T
-    public typealias Function = Stream<T> -> Result<(O,Stream<T>)>
+public struct Parser<I: EmptyCheckable, O>: ParserType {
+    public typealias Input = I
+    public typealias Output = O
+    public typealias Function = Stream<Input> -> Result<(Output,Stream<Input>)>
 
     public var parse: Function
 
@@ -60,4 +66,3 @@ public struct Parser<T: EmptyCheckable, O> {
         self.parse = parse
     }
 }
-

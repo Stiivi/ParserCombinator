@@ -28,11 +28,6 @@ public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,
     }
 }
 
-infix operator <|> { associativity left precedence 130 }
-public func <|><T,O>(left: Parser<T,O>, right: Parser<T,O>) -> Parser<T,O> {
-    return alternate(left, right)
-}
-
 /**
     Also known as `bind`.
 
@@ -58,12 +53,6 @@ public func into<A,B,T>(parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,
         }
     }
 }
-
-infix operator >>- { associativity left precedence 130 }
-public func >>-<A,B,T>(parser: Parser<T,A>, f: (A->Parser<T,B>)) -> Parser<T,B> {
-    return into(parser, f)
-}
-
 /**
     using :: parser * ** -> (** -> ***) -> parser * ***
     p $using f = p $into \v. succeed (f v)
@@ -89,13 +78,6 @@ public func then<T,A,B> (p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
     }
 }
 
-
-/*
- 
- (Parser cs1) <*> (Parser cs2) =
- Parser (\s -> [(f a, s2) | (f, s1) <- cs1 s, (a, s2) <- cs2 s1]
-*/
-
 /*
  many :: f a -> f [a]
  many v = many_v
@@ -104,7 +86,14 @@ public func then<T,A,B> (p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
             some_v = (:) <$> v <*> many_v
 
  */
+//===----------------------------------------------------------------------===//
+//
+// Repeats
+//
+//===----------------------------------------------------------------------===//
 /**
+
+    Get zero or more
 
     many :: parser * ** -> parser * [**]
     many p = ((p $then many p) $using cons) $alt (succeed [])
@@ -123,6 +112,8 @@ public func many<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
 
 /**
  
+ Get one or more
+ 
  some :: parser * ** -> parser * [**]
  some p = (p $then many p) $using cons
 
@@ -131,7 +122,48 @@ public func some<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
     return using(then(p, many(p)), cons)
 }
 
-func cons<T>(tuple: (T, [T])) -> [T] {
-    let (head, tail) = tuple
-    return [head] + tail
+/**
+ 
+ Get one or more separated by a separator
+ 
+ */
+
+public func separated<T, A, B>(p: Parser<T,A>, _ sep:Parser<T,B>) -> Parser<T,[A]> {
+    return using(then(p, many(xthen(sep, p))), cons)
+}
+
+
+//===----------------------------------------------------------------------===//
+//
+// Others
+//
+//===----------------------------------------------------------------------===//
+/**
+xthen :: parser * ** -> parser * *** -> parser * ***
+p1 $xthen p2 = (p1 $then p2) $using snd
+*/
+
+public func xthen<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,B> {
+    return using(then(p, q)) { (_, second) in second }
+}
+
+/**
+thenx :: parser * ** -> parser * *** -> parser * **
+p1 $thenx p2 = (p1 $then p2) $using fst
+*/
+
+public func thenx<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,A> {
+    return using(then(p, q)) { (first, _) in first }
+}
+
+/**
+
+return :: parser * ** -> *** -> parser * ***
+p $return v = p $using (const v)
+where const x y = x
+
+*/
+
+public func `return`<T, A, B>(p: Parser<T,A>, value: B) -> Parser<T,B> {
+    return succeed(value)
 }

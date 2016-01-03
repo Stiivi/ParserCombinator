@@ -14,6 +14,7 @@
 
 /// Represents alternation. If the first parser is not successful, then the
 /// result of the right one is returned.
+///
 public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,O> {
     return Parser {
         input in
@@ -27,16 +28,18 @@ public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,
     }
 }
 
-/**
-    Also known as `bind`.
-
-    into :: parser * ** -> (** -> parser * ***) -> parser * ***
-    (p $into f) inp = g (p inp)
-                      where
-                        g (OK (v,inp’)) = f v inp’
-                        g other         = other
-*/
-
+/// Parser that passes output of the wrapped parser, transforms it through a
+/// function `f` which should return a parser. The returned parser might
+/// be of another type as the wrapped parser.
+///
+/// Also known as `bind`.
+///
+///     into :: parser * ** -> (** -> parser * ***) -> parser * ***
+///     (p $into f) inp = g (p inp)
+///                       where
+///                           g (OK (v,inp’)) = f v inp’
+///                           g other         = other
+///
 public func into<A,B,T>(parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,B> {
     return Parser{
         input in
@@ -52,10 +55,12 @@ public func into<A,B,T>(parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,
         }
     }
 }
-/**
-    using :: parser * ** -> (** -> ***) -> parser * ***
-    p $using f = p $into \v. succeed (f v)
-*/
+/// Parser that transforms value from the wrapped parser with a function
+/// `transform`
+///
+///     using :: parser * ** -> (** -> ***) -> parser * ***
+///     p $using f = p $into \v. succeed (f v)
+///
 public func using<T,A,B> (parser: Parser<T,A>, _ transform: A->B) -> Parser<T,B> {
     return into(parser) {
         value in
@@ -63,11 +68,11 @@ public func using<T,A,B> (parser: Parser<T,A>, _ transform: A->B) -> Parser<T,B>
     }
 }
 
-/**
-    then :: parser * ** -> parser * *** -> parser * (**,***)
-    p $then q = p $into \v. q $using \w.(v,w)
-*/
-
+/// Parser that puts result of two wrapped parsers into a tuple
+///
+///     then :: parser * ** -> parser * *** -> parser * (**,***)
+///     p $then q = p $into \v. q $using \w.(v,w)
+///
 public func then<T,A,B> (p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
     return into(p) {
         v in
@@ -77,28 +82,18 @@ public func then<T,A,B> (p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
     }
 }
 
-/*
- many :: f a -> f [a]
- many v = many_v
-         where
-            many_v = some_v <|> pure []
-            some_v = (:) <$> v <*> many_v
-
- */
 //===----------------------------------------------------------------------===//
 //
 // Repeats
 //
 //===----------------------------------------------------------------------===//
-/**
 
-    Get zero or more
 
-    many :: parser * ** -> parser * [**]
-    many p = ((p $then many p) $using cons) $alt (succeed [])
-
-*/
-
+/// Parser that parses zero or more occurences of the wrapped parser
+///
+///     many :: parser * ** -> parser * [**]
+///     many p = ((p $then many p) $using cons) $alt (succeed [])
+////
 public func many<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
     let inner_many = Parser {
         many(p).parse($0)
@@ -109,24 +104,23 @@ public func many<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
     return alternate(some, succeed([O]()))
 }
 
-/**
- 
- Get one or more
- 
- some :: parser * ** -> parser * [**]
- some p = (p $then many p) $using cons
 
-*/
+/// Parser that parses one or more occurences of the wrapped parser
+///
+///     some :: parser * ** -> parser * [**]
+///     some p = (p $then many p) $using cons
+///
 public func some<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
     return using(then(p, many(p)), cons)
 }
 
-/**
- 
- Get one or more separated by a separator
- 
- */
-
+/// Parser that parses one or more occurences of wrapped parser `p` separated
+/// by separator parser `sep`. For example the parser:
+///
+///     let parser = separated(item("item"), expect(","))
+///
+/// Matches a stream of input `["a", ",", "b", ",", "c"]`
+///
 public func separated<T, A, B>(p: Parser<T,A>, _ sep:Parser<T,B>) -> Parser<T,[A]> {
     return using(then(p, many(xthen(sep, p))), cons)
 }
@@ -137,32 +131,32 @@ public func separated<T, A, B>(p: Parser<T,A>, _ sep:Parser<T,B>) -> Parser<T,[A
 // Others
 //
 //===----------------------------------------------------------------------===//
-/**
-xthen :: parser * ** -> parser * *** -> parser * ***
-p1 $xthen p2 = (p1 $then p2) $using snd
-*/
-
+/// Parser that reads input from both parsers but returns just the result from
+/// the later one.
+///
+///     xthen :: parser * ** -> parser * *** -> parser * ***
+///     p1 $xthen p2 = (p1 $then p2) $using snd
+///
 public func xthen<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,B> {
     return using(then(p, q)) { (_, second) in second }
 }
 
-/**
-thenx :: parser * ** -> parser * *** -> parser * **
-p1 $thenx p2 = (p1 $then p2) $using fst
-*/
-
+/// Parser that reads input from both parsers but returns just the result from
+/// the first one.
+///
+///     thenx :: parser * ** -> parser * *** -> parser * **
+///     p1 $thenx p2 = (p1 $then p2) $using fst
+///
 public func thenx<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,A> {
     return using(then(p, q)) { (first, _) in first }
 }
 
-/**
-
-return :: parser * ** -> *** -> parser * ***
-p $return v = p $using (const v)
-where const x y = x
-
-*/
-
+/// Parser that discards the output from the wrapped parser and returns a
+/// `value` instead.
+///     return :: parser * ** -> *** -> parser * ***
+///     p $return v = p $using (const v)
+///                   where const x y = x
+///
 public func `return`<T, A, B>(p: Parser<T,A>, value: B) -> Parser<T,B> {
     return succeed(value)
 }

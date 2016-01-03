@@ -27,11 +27,16 @@ public protocol ResultType {
     typealias Value
 }
 
-/// Parsing result
+/// Parsing result wrapper.
 public enum Result<V>: CustomStringConvertible, ResultType {
     public typealias Value = V
+
+    /// Holds the parser result value if the parser succeeded
     case OK(Value)
+    /// Parser failed to match an expected input. Other parsers might continue
+    /// parsing if their predecessors failed.
     case Fail(String)
+    /// Unrecoverable error
     case Error(String)
 
     public var description: String {
@@ -54,15 +59,19 @@ protocol ParserType {
     typealias Output
 }
 
-/// The Parser definition
+/// The Parser – structure wrapping a function that reads a symbol from the input
+/// stream and produces a parser result `Result` with output value and next
+/// stream state
 public struct Parser<I: EmptyCheckable, O>: ParserType {
     public typealias Input = I
     public typealias Output = O
-    public typealias Function = Stream<Input> -> Result<(Output,Stream<Input>)>
 
-    public var parse: Function
+    public var parse: Stream<Input> -> Result<(Output,Stream<Input>)>
 
-    public init(_ parse: Function) {
+    /// Initializes the parser with a fuction `parse` which takes an input stream
+    /// and produces a parser result wit the output value and advanced stream
+    /// state.
+    public init(_ parse: Stream<Input> -> Result<(Output,Stream<Input>)>) {
         self.parse = parse
     }
 }

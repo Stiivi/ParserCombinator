@@ -44,6 +44,7 @@
 		F8BDA0891C3714DF00C904D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F8BDA0921C3714EF00C904D6 /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		F8C747CA1C37A59C0005F263 /* Empty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
+		F8C930531C399028009EC736 /* Expression.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Expression.playground; sourceTree = "<group>"; };
 		F8DA44D91C39015D002AA5C9 /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,6 +79,7 @@
 		F8BDA06E1C3714DF00C904D6 = {
 			isa = PBXGroup;
 			children = (
+				F8C930531C399028009EC736 /* Expression.playground */,
 				F8DA44D91C39015D002AA5C9 /* Playground.playground */,
 				F8AC75601C38BD5300252C5C /* README.md */,
 				F8BDA07A1C3714DF00C904D6 /* ParserCombinator */,

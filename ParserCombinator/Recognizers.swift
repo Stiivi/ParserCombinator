@@ -12,16 +12,24 @@
 //
 //===----------------------------------------------------------------------===//
 
+/// Parser that always succeeds with value `value`
+///
+/// - Returns: Parser of the same type as the `value`
 public func succeed<T,O>(value: O) -> Parser<T, O> {
     return Parser { Result.OK(value, $0) }
 }
 
 
+/// Parser that always fails with an error `error`.
+///
+/// - Returns: Parser of the same type as the input parser
 public func fail<T,O>(error: String) -> Parser<T, O> {
     return Parser { _ in Result.Fail(error) }
 }
 
-
+/// Converts a failure to an error
+///
+/// - Returns: Parser of the same type as the input parser
 public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
     return Parser {
         input in
@@ -38,8 +46,11 @@ public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
 }
 
 
-/// Recognise single symbol
-/// - Returns: symbol if matches `condition`, otherwise failure
+/// Recognise single symbol that matches the predicate `condition`. If the symbol
+/// does not match, then an error `expected` is returned.
+///
+/// - Returns: Parser of the same type as the input stream
+///
 public func satisfy<T: EmptyCheckable>(expected: String, _ condition: (T) -> Bool) -> Parser<T,T> {
     let message = "Expected \(expected)."
     return Parser {
@@ -60,7 +71,10 @@ public func satisfy<T: EmptyCheckable>(expected: String, _ condition: (T) -> Boo
 }
 
 
-/// Recognizes symbol with given text
+/// Recognizes a token that is equal to value
+///
+/// - Returns: Parser of the same type as the input stream
+///
 public func expect<T: Equatable>(value: T) -> Parser<T, T>{
     return satisfy("expected \(value)") {
         $0 == value
@@ -68,14 +82,50 @@ public func expect<T: Equatable>(value: T) -> Parser<T, T>{
 }
 
 
-/// Recognizes symbol with given text
+/// Recognizes symbol convertible to a string with given value that is also
+/// converted to a string: `String(input) == String(value)`.
+///
+/// - Returns: Parser of the same type as the input stream
+///
 public func expectText<T: CustomStringConvertible>(value: T) -> Parser<T, T>{
     return satisfy("expected \(value)") {
         String($0) == String(value)
     }
 }
 
+/// Parser that takes any non-empty token from the input. If the token is not
+/// present, for example because of end of the input stream, then
+/// `expected` error is returned.
+///
+/// - Returns: Parser of the same type as the source tokens
+public func item<T>(expected: String) -> Parser<T, T> {
+    return satisfy(expected) { _ in true }
+}
 
-public func item<T>(expectation: String) -> Parser<T, T> {
-    return satisfy(expectation) { _ in true }
+
+/**
+ Wraps a function in a closure that just passes result of the wrapped parser.
+ This function can be used when constructing recursive grammar:
+ 
+        // Declaration of expr that will be defined later
+        let expr: Parser<String, Int>
+
+        // Recursive reference to expr:
+        let term =
+                (§"(" *> wrap { expr } <* §")")
+                || number
+
+        // Actual definition of the parser
+        let expr   =
+                (term + (§"+" *> term))      => op(+)
+                || (term + (§"-" *> term))   => op(-)
+                || term
+
+ - Returns: wrapped parser of the same type
+ 
+ */
+public func wrap<T,O>(parser: () -> Parser<T,O>) -> Parser<T,O> {
+    return Parser {
+        input in return parser().parse(input)
+    }
 }

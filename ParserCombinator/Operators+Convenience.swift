@@ -77,6 +77,12 @@ public prefix func §<T: Equatable>(value: T) -> Parser<T, T>{
     return expect(value)
 }
 
+// String comparable
+prefix operator % { }
+public prefix func %<T>(expectation: String) -> Parser<T, T> {
+    return item(expectation)
+}
+
 
 //===----------------------------------------------------------------------===//
 //

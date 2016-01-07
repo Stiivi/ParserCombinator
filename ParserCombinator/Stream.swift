@@ -58,7 +58,7 @@ public struct CollectionStreamer<T: CollectionType>: CustomStringConvertible {
         self.empty = empty
     }
 
-    /// Returns "tail" of the streamer – streamer that represents rest of the 
+    /// Returns "tail" of the streamer – streamer that represents rest of the
     /// collection.
     func next() -> CollectionStreamer {
         if self.index == self.collection.endIndex {
@@ -97,22 +97,14 @@ public struct CollectionStreamer<T: CollectionType>: CustomStringConvertible {
 }
 
 /// Objects conforming to the `Streamable` protocol can be converted to a stream.
-public protocol Streamable {
+public protocol StreamConvertible {
     typealias StreamElement
-    func stream(empty: StreamElement) -> Stream<StreamElement>
+    func stream() -> Stream<StreamElement>
 }
 
-extension Array: Streamable {
-    public typealias StreamElement = Array.Generator.Element
-    public func stream(empty: StreamElement) -> Stream<StreamElement> {
-        return CollectionStreamer(self, empty).stream()
-    }
-}
-
-extension String: Streamable {
-    public typealias StreamElement = Character
-    // We consider the "\0" to be empty character
-    public func stream(empty: StreamElement = "\0") -> Stream<Character> {
-        return CollectionStreamer(self.characters, empty).stream()
+extension CollectionType where Generator.Element: EmptyCheckable {
+    public typealias StreamElement = Generator.Element
+    public func stream() -> Stream<StreamElement> {
+        return CollectionStreamer(self, StreamElement.EmptyValue).stream()
     }
 }

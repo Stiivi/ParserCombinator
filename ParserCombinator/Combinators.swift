@@ -19,13 +19,29 @@ public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,
     return Parser {
         input in
         let result = left.parse(input)
-        if case .OK = result {
-            return result
-        }
-        else {
-            return right.parse(input)
+        switch result {
+        case .OK: return result
+        case .Error: return result
+        default: return right.parse(input)
         }
     }
+}
+
+
+/// Parser that returns value from the wrapped parser if it succeeds or returns
+/// `nil`.
+///
+public func option<T,O>(parser: Parser<T,O>) -> Parser<T, O?> {
+    return alternate(using(parser, {r in Optional.Some(r)}),
+                     succeed(Optional.None))
+}
+
+/// Parser that returns `true` if the wrapped parser succeeds or `false` if the
+/// wrapped parser fails.
+///
+public func optionFlag<T,O>(parser: Parser<T,O>) -> Parser<T, Bool> {
+    return alternate(using(parser, {_ in true}),
+                     succeed(false))
 }
 
 /// Parser that passes output of the wrapped parser, transforms it through a
@@ -48,10 +64,10 @@ public func into<A,B,T>(parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,
         switch result {
         case .OK(let value, let input2):
             return f(value).parse(input2)
-        case .Fail(let error):
-            return Result.Fail(error)
-        case .Error(let error):
-            return Result.Error(error)
+        case .Fail(let error, let token):
+            return Result.Fail(error, token)
+        case .Error(let error, let token):
+            return Result.Error(error, token)
         }
     }
 }

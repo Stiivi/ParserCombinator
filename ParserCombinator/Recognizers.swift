@@ -24,8 +24,12 @@ public func succeed<T,O>(value: O) -> Parser<T, O> {
 ///
 /// - Returns: Parser of the same type as the input parser
 public func fail<T,O>(error: String) -> Parser<T, O> {
-    return Parser { _ in Result.Fail(error) }
+    return Parser {
+        input in
+        Result.Fail(error, input.head)
+    }
 }
+
 
 /// Converts a failure to an error
 ///
@@ -37,8 +41,8 @@ public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
         let result = parser.parse(input)
 
         switch result {
-        case .Fail(let error):
-            return Result.Error(error)
+        case .Fail(let error, let token):
+            return Result.Error(error, token)
         default:
             return result
         }
@@ -52,10 +56,10 @@ public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
 /// - Returns: Parser of the same type as the input stream
 ///
 public func satisfy<T: EmptyCheckable>(expected: String, _ condition: (T) -> Bool) -> Parser<T,T> {
-    let message = "Expected \(expected)."
     return Parser {
         input in
         let (head, tail) = (input.head, input.tail)
+        let message = "Expected \(expected), got \(head)."
         if head.isEmpty {
             return fail("Unexpected end of input. \(message)").parse(tail)
         }

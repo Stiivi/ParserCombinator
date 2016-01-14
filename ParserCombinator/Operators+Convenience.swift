@@ -41,25 +41,13 @@ Skip
 
 infix operator *> { associativity right precedence 130 }
 public func *><T, A, B>(p: Parser<T,A>, q:Parser<T,B>) -> Parser<T,B> {
-    return xthen(p, q)
+    return xthen(p, nofail(q))
 }
-
-infix operator ≥ { associativity right precedence 130 }
-public func ≥<T, A, B>(p: Parser<T,A>, q:Parser<T,B>) -> Parser<T,B> {
-    return xthen(p, q)
-}
-
 
 infix operator <* { associativity right precedence 130 }
 public func <*<T, A, B>(p: Parser<T,A>, q:Parser<T,B>) -> Parser<T,A> {
     return thenx(p, q)
 }
-
-infix operator ≤ { associativity right precedence 130 }
-public func ≤<T, A, B>(p: Parser<T,A>, q:Parser<T,B>) -> Parser<T,A> {
-    return thenx(p, q)
-}
-
 
 // infix operator + { associativity left precedence 130 }
 public func +<T,A,B> (p: Parser<T,A>, q: Parser<T,B>) -> Parser<T,(A,B)> {

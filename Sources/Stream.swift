@@ -98,7 +98,7 @@ public struct CollectionStreamer<T: CollectionType>: CustomStringConvertible {
 
 /// Objects conforming to the `Streamable` protocol can be converted to a stream.
 public protocol StreamConvertible {
-    typealias StreamElement
+    associatedtype StreamElement
     func stream() -> Stream<StreamElement>
 }
 

@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F86135991C378F2C00A73C43 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86135981C378F2C00A73C43 /* Stream.swift */; };
-		F87A6CD41C38C22200E69B5B /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A6CD31C38C22200E69B5B /* Functions.swift */; };
-		F88FAA6F1C37B771006FE431 /* Recognizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88FAA6E1C37B771006FE431 /* Recognizers.swift */; };
-		F88FAA711C37B77C006FE431 /* Combinators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88FAA701C37B77C006FE431 /* Combinators.swift */; };
-		F8AC75651C38C0FC00252C5C /* Operators+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AC75641C38C0FC00252C5C /* Operators+Convenience.swift */; };
+		F8A97CC81C6FF08300191EDF /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BDA0921C3714EF00C904D6 /* Parser.swift */; };
+		F8A97CC91C6FF08300191EDF /* Recognizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88FAA6E1C37B771006FE431 /* Recognizers.swift */; };
+		F8A97CCA1C6FF08300191EDF /* Combinators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88FAA701C37B77C006FE431 /* Combinators.swift */; };
+		F8A97CCB1C6FF08300191EDF /* Operators+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AC75641C38C0FC00252C5C /* Operators+Convenience.swift */; };
+		F8A97CCC1C6FF08300191EDF /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C747CA1C37A59C0005F263 /* Empty.swift */; };
+		F8A97CCD1C6FF08300191EDF /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86135981C378F2C00A73C43 /* Stream.swift */; };
+		F8A97CCE1C6FF08300191EDF /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A6CD31C38C22200E69B5B /* Functions.swift */; };
 		F8BDA07C1C3714DF00C904D6 /* ParserCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = F8BDA07B1C3714DF00C904D6 /* ParserCombinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8BDA0831C3714DF00C904D6 /* ParserCombinator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8BDA0781C3714DF00C904D6 /* ParserCombinator.framework */; };
 		F8BDA0881C3714DF00C904D6 /* ParserCombinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BDA0871C3714DF00C904D6 /* ParserCombinatorTests.swift */; };
-		F8BDA0931C3714EF00C904D6 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BDA0921C3714EF00C904D6 /* Parser.swift */; };
-		F8C747CB1C37A59C0005F263 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C747CA1C37A59C0005F263 /* Empty.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,7 +109,8 @@
 				F86FDCE91C38F32B00EB764B /* Stream */,
 				F87A6CD31C38C22200E69B5B /* Functions.swift */,
 			);
-			path = ParserCombinator;
+			name = ParserCombinator;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		F8BDA0861C3714DF00C904D6 /* ParserCombinatorTests */ = {
@@ -229,13 +230,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F88FAA711C37B77C006FE431 /* Combinators.swift in Sources */,
-				F8BDA0931C3714EF00C904D6 /* Parser.swift in Sources */,
-				F8AC75651C38C0FC00252C5C /* Operators+Convenience.swift in Sources */,
-				F87A6CD41C38C22200E69B5B /* Functions.swift in Sources */,
-				F86135991C378F2C00A73C43 /* Stream.swift in Sources */,
-				F8C747CB1C37A59C0005F263 /* Empty.swift in Sources */,
-				F88FAA6F1C37B771006FE431 /* Recognizers.swift in Sources */,
+				F8A97CC81C6FF08300191EDF /* Parser.swift in Sources */,
+				F8A97CC91C6FF08300191EDF /* Recognizers.swift in Sources */,
+				F8A97CCA1C6FF08300191EDF /* Combinators.swift in Sources */,
+				F8A97CCB1C6FF08300191EDF /* Operators+Convenience.swift in Sources */,
+				F8A97CCC1C6FF08300191EDF /* Empty.swift in Sources */,
+				F8A97CCD1C6FF08300191EDF /* Stream.swift in Sources */,
+				F8A97CCE1C6FF08300191EDF /* Functions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,7 +360,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = ParserCombinator/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = databrewery.ParserCombinator;
@@ -383,7 +384,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = ParserCombinator/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = databrewery.ParserCombinator;

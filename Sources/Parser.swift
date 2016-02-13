@@ -24,7 +24,7 @@ public enum ParserError: ErrorType, CustomStringConvertible {
 }
 
 public protocol ResultType {
-    typealias Value
+    associatedtype Value
 }
 
 /// Parsing result wrapper.
@@ -55,8 +55,8 @@ public enum Result<V,T>: CustomStringConvertible, ResultType {
 //===----------------------------------------------------------------------===//
 
 protocol ParserType {
-    typealias Input
-    typealias Output
+    associatedtype Input
+    associatedtype Output
 }
 
 /// The Parser – structure wrapping a function that reads a symbol from the input

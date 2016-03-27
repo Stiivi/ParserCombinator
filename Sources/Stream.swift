@@ -39,7 +39,7 @@ public struct Stream<Element>: CustomStringConvertible {
 }
 
 /// Wrapper for a collection to provide streaming context
-public struct CollectionStreamer<T: CollectionType>: CustomStringConvertible {
+public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
     // TODO: make Element:EmptyCheckable
     typealias Element = T.Generator.Element
     let index: T.Index
@@ -102,8 +102,8 @@ public protocol StreamConvertible {
     func stream() -> Stream<StreamElement>
 }
 
-extension CollectionType where Generator.Element: EmptyCheckable {
-    public typealias StreamElement = Generator.Element
+extension Collection where Iterator.Element: EmptyCheckable {
+    public typealias StreamElement = Iterator.Element
     public func stream() -> Stream<StreamElement> {
         return CollectionStreamer(self, StreamElement.EmptyValue).stream()
     }

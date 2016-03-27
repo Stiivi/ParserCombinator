@@ -32,8 +32,8 @@ public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,
 /// `nil`.
 ///
 public func option<T,O>(parser: Parser<T,O>) -> Parser<T, O?> {
-    return alternate(using(parser, {r in Optional.Some(r)}),
-                     succeed(Optional.None))
+    return alternate(using(parser, {r in Optional.some(r)}),
+                     succeed(Optional.none))
 }
 
 /// Parser that returns `true` if the wrapped parser succeeds or `false` if the

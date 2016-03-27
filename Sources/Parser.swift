@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 /// Parsing error with error message
-public enum ParserError: ErrorType, CustomStringConvertible {
+public enum ParserError: ErrorProtocol, CustomStringConvertible {
     case Error(String)
 
     public var description: String {

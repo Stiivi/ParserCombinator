@@ -15,7 +15,7 @@
 /// Represents alternation. If the first parser is not successful, then the
 /// result of the right one is returned.
 ///
-public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,O> {
+public func alternate<T,O>(_ left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,O> {
     return Parser {
         input in
         let result = left.parse(input)
@@ -31,7 +31,7 @@ public func alternate<T,O>(left: Parser<T,O>, _ right: Parser<T,O>) -> Parser<T,
 /// Parser that returns value from the wrapped parser if it succeeds or returns
 /// `nil`.
 ///
-public func option<T,O>(parser: Parser<T,O>) -> Parser<T, O?> {
+public func option<T,O>(_ parser: Parser<T,O>) -> Parser<T, O?> {
     return alternate(using(parser, {r in Optional.some(r)}),
                      succeed(Optional.none))
 }
@@ -39,7 +39,7 @@ public func option<T,O>(parser: Parser<T,O>) -> Parser<T, O?> {
 /// Parser that returns `true` if the wrapped parser succeeds or `false` if the
 /// wrapped parser fails.
 ///
-public func optionFlag<T,O>(parser: Parser<T,O>) -> Parser<T, Bool> {
+public func optionFlag<T,O>(_ parser: Parser<T,O>) -> Parser<T, Bool> {
     return alternate(using(parser, {_ in true}),
                      succeed(false))
 }
@@ -56,7 +56,7 @@ public func optionFlag<T,O>(parser: Parser<T,O>) -> Parser<T, Bool> {
 ///                           g (OK (v,inp’)) = f v inp’
 ///                           g other         = other
 ///
-public func into<A,B,T>(parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,B> {
+public func into<A,B,T>(_ parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,B> {
     return Parser{
         input in
         let result = parser.parse(input)
@@ -77,7 +77,7 @@ public func into<A,B,T>(parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,
 ///     using :: parser * ** -> (** -> ***) -> parser * ***
 ///     p $using f = p $into \v. succeed (f v)
 ///
-public func using<T,A,B> (parser: Parser<T,A>, _ transform: A->B) -> Parser<T,B> {
+public func using<T,A,B> (_ parser: Parser<T,A>, _ transform: A->B) -> Parser<T,B> {
     return into(parser) {
         value in
         return succeed(transform(value))
@@ -89,7 +89,7 @@ public func using<T,A,B> (parser: Parser<T,A>, _ transform: A->B) -> Parser<T,B>
 ///     then :: parser * ** -> parser * *** -> parser * (**,***)
 ///     p $then q = p $into \v. q $using \w.(v,w)
 ///
-public func then<T,A,B> (p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
+public func then<T,A,B> (_ p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
     return into(p) {
         v in
         return using(q) {
@@ -110,7 +110,7 @@ public func then<T,A,B> (p: Parser<T,A>, _ q: Parser<T,B>) -> Parser<T,(A,B)> {
 ///     many :: parser * ** -> parser * [**]
 ///     many p = ((p $then many p) $using cons) $alt (succeed [])
 ////
-public func many<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
+public func many<T, O>(_ p:Parser<T,O>) -> Parser<T,[O]>{
     let inner_many = Parser {
         many(p).parse($0)
     }
@@ -126,7 +126,7 @@ public func many<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
 ///     some :: parser * ** -> parser * [**]
 ///     some p = (p $then many p) $using cons
 ///
-public func some<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
+public func some<T, O>(_ p:Parser<T,O>) -> Parser<T,[O]>{
     return using(then(p, many(p)), cons)
 }
 
@@ -137,7 +137,7 @@ public func some<T, O>(p:Parser<T,O>) -> Parser<T,[O]>{
 ///
 /// Matches a stream of input `["a", ",", "b", ",", "c"]`
 ///
-public func separated<T, A, B>(p: Parser<T,A>, _ sep:Parser<T,B>) -> Parser<T,[A]> {
+public func separated<T, A, B>(_ p: Parser<T,A>, _ sep:Parser<T,B>) -> Parser<T,[A]> {
     return using(then(p, many(xthen(sep, p))), cons)
 }
 
@@ -153,7 +153,7 @@ public func separated<T, A, B>(p: Parser<T,A>, _ sep:Parser<T,B>) -> Parser<T,[A
 ///     xthen :: parser * ** -> parser * *** -> parser * ***
 ///     p1 $xthen p2 = (p1 $then p2) $using snd
 ///
-public func xthen<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,B> {
+public func xthen<T, A, B>(_ p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,B> {
     return using(then(p, q)) { (_, second) in second }
 }
 
@@ -163,7 +163,7 @@ public func xthen<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,B> {
 ///     thenx :: parser * ** -> parser * *** -> parser * **
 ///     p1 $thenx p2 = (p1 $then p2) $using fst
 ///
-public func thenx<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,A> {
+public func thenx<T, A, B>(_ p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,A> {
     return using(then(p, q)) { (first, _) in first }
 }
 
@@ -173,6 +173,6 @@ public func thenx<T, A, B>(p: Parser<T,A>, _ q:Parser<T,B>) -> Parser<T,A> {
 ///     p $return v = p $using (const v)
 ///                   where const x y = x
 ///
-public func `return`<T, A, B>(p: Parser<T,A>, value: B) -> Parser<T,B> {
+public func `return`<T, A, B>(_ p: Parser<T,A>, value: B) -> Parser<T,B> {
     return succeed(value)
 }

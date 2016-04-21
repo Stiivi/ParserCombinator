@@ -15,7 +15,7 @@
 /// Parser that always succeeds with value `value`
 ///
 /// - Returns: Parser of the same type as the `value`
-public func succeed<T,O>(value: O) -> Parser<T, O> {
+public func succeed<T,O>(_ value: O) -> Parser<T, O> {
     return Parser { Result.OK(value, $0) }
 }
 
@@ -23,7 +23,7 @@ public func succeed<T,O>(value: O) -> Parser<T, O> {
 /// Parser that always fails with an error `error`.
 ///
 /// - Returns: Parser of the same type as the input parser
-public func fail<T,O>(error: String) -> Parser<T, O> {
+public func fail<T,O>(_ error: String) -> Parser<T, O> {
     return Parser {
         input in
         Result.Fail(error, input.head)
@@ -34,7 +34,7 @@ public func fail<T,O>(error: String) -> Parser<T, O> {
 /// Converts a failure to an error
 ///
 /// - Returns: Parser of the same type as the input parser
-public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
+public func nofail<T,O>(_ parser: Parser<T,O>) -> Parser<T,O> {
     return Parser {
         input in
 
@@ -55,7 +55,7 @@ public func nofail<T,O>(parser: Parser<T,O>) -> Parser<T,O> {
 ///
 /// - Returns: Parser of the same type as the input stream
 ///
-public func satisfy<T: EmptyCheckable>(expected: String, _ condition: (T) -> Bool) -> Parser<T,T> {
+public func satisfy<T: EmptyCheckable>(_ expected: String, _ condition: (T) -> Bool) -> Parser<T,T> {
     return Parser {
         input in
         let (head, tail) = (input.head, input.tail)
@@ -79,7 +79,7 @@ public func satisfy<T: EmptyCheckable>(expected: String, _ condition: (T) -> Boo
 ///
 /// - Returns: Parser of the same type as the input stream
 ///
-public func expect<T: Equatable>(value: T) -> Parser<T, T>{
+public func expect<T: Equatable>(_ value: T) -> Parser<T, T>{
     return satisfy("expected \(value)") {
         $0 == value
     }
@@ -91,7 +91,7 @@ public func expect<T: Equatable>(value: T) -> Parser<T, T>{
 ///
 /// - Returns: Parser of the same type as the input stream
 ///
-public func expectText<T: CustomStringConvertible>(value: T) -> Parser<T, T>{
+public func expectText<T: CustomStringConvertible>(_ value: T) -> Parser<T, T>{
     return satisfy("expected \(value)") {
         String($0) == String(value)
     }
@@ -102,7 +102,7 @@ public func expectText<T: CustomStringConvertible>(value: T) -> Parser<T, T>{
 /// `expected` error is returned.
 ///
 /// - Returns: Parser of the same type as the source tokens
-public func item<T>(expected: String) -> Parser<T, T> {
+public func item<T>(_ expected: String) -> Parser<T, T> {
     return satisfy(expected) { _ in true }
 }
 
@@ -128,7 +128,7 @@ public func item<T>(expected: String) -> Parser<T, T> {
  - Returns: wrapped parser of the same type
  
  */
-public func wrap<T,O>(parser: () -> Parser<T,O>) -> Parser<T,O> {
+public func wrap<T,O>(_ parser: () -> Parser<T,O>) -> Parser<T,O> {
     return Parser {
         input in return parser().parse(input)
     }

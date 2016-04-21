@@ -75,7 +75,7 @@ public struct Parser<I: EmptyCheckable, O>: ParserType {
         self.fun = parse
     }
 
-    public func parse(stream: Stream<Input>) -> Result<(Output, Stream<Input>),Input> {
+    public func parse(_ stream: Stream<Input>) -> Result<(Output, Stream<Input>),Input> {
         return self.fun(stream)
     }
 }

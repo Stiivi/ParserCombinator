@@ -6,15 +6,28 @@
 //  Copyright © 2016 Stefan Urbanek. All rights reserved.
 //
 
-infix operator >>- { associativity right precedence 130 }
+precedencegroup ReturnPrecedence {
+	associativity: right
+	higherThan: LogicalDisjunctionPrecedence
+	lowerThan: AdditionPrecedence
+}
 
-public func >>-<A,B,T>(parser: Parser<T,A>, f: (A->Parser<T,B>)) -> Parser<T,B> {
+precedencegroup BindPrecedence {
+	associativity: right
+	higherThan: ReturnPrecedence
+	lowerThan: AdditionPrecedence
+}
+
+
+infix operator >>-: BindPrecedence
+
+public func >>-<A,B,T>(parser: Parser<T,A>, f: @escaping (A)->Parser<T,B>) -> Parser<T,B> {
     return into(parser, f)
 }
 
 
 // Traditional
-infix operator <|> { associativity right precedence 110 }
+infix operator <|>: LogicalDisjunctionPrecedence
 
 public func <|><T,O>(left: Parser<T,O>, right: Parser<T,O>) -> Parser<T,O> {
     return alternate(left, right)
@@ -26,9 +39,9 @@ public func ||<T,O>(left: Parser<T,O>, right: Parser<T,O>) -> Parser<T,O> {
 }
 
 
-infix operator => { associativity right precedence 120 }
+infix operator =>: ReturnPrecedence
 
-public func => <T,A,B> (parser: Parser<T,A>, transform: A->B) -> Parser<T,B> {
+public func => <T,A,B> (parser: Parser<T,A>, transform: @escaping (A)->B) -> Parser<T,B> {
     return using(parser, transform)
 }
 
@@ -39,12 +52,12 @@ Skip
 
 */
 
-infix operator *> { associativity right precedence 130 }
+infix operator *> : BindPrecedence
 public func *><T, A, B>(p: Parser<T,A>, q:Parser<T,B>) -> Parser<T,B> {
     return xthen(p, nofail(q))
 }
 
-infix operator <* { associativity right precedence 130 }
+infix operator <* : BindPrecedence
 public func <*<T, A, B>(p: Parser<T,A>, q:Parser<T,B>) -> Parser<T,A> {
     return thenx(p, q)
 }
@@ -54,19 +67,19 @@ public func +<T,A,B> (p: Parser<T,A>, q: Parser<T,B>) -> Parser<T,(A,B)> {
     return then(p, q)
 }
 
-infix operator … { associativity right precedence 130 }
+infix operator … : BindPrecedence
 public func …<T,A,B> (p: Parser<T,A>, q: Parser<T,B>) -> Parser<T,(A,B)> {
     return then(p, q)
 }
 
 // String comparable
-prefix operator § { }
+prefix operator §
 public prefix func §<T: Equatable>(value: T) -> Parser<T, T>{
     return expect(value)
 }
 
 // String comparable
-prefix operator % { }
+prefix operator %
 public prefix func %<T>(expectation: String) -> Parser<T, T> {
     return item(expectation)
 }

@@ -55,11 +55,12 @@ public func nofail<T,O>(_ parser: Parser<T,O>) -> Parser<T,O> {
 ///
 /// - Returns: Parser of the same type as the input stream
 ///
-public func satisfy<T: EmptyCheckable>(_ expected: String, _ condition: (T) -> Bool) -> Parser<T,T> {
+public func satisfy<T: EmptyCheckable>(_ expected: String, _ condition:
+	@escaping (T) -> Bool) -> Parser<T,T> {
     return Parser {
         input in
         let (head, tail) = (input.head, input.tail)
-        let message = "Expected \(expected), got \(head)."
+        let message = "Expected \(expected), got '\(head)'."
         if head.isEmpty {
             return fail("Unexpected end of input. \(message)").parse(tail)
         }
@@ -80,7 +81,7 @@ public func satisfy<T: EmptyCheckable>(_ expected: String, _ condition: (T) -> B
 /// - Returns: Parser of the same type as the input stream
 ///
 public func expect<T: Equatable>(_ value: T) -> Parser<T, T>{
-    return satisfy("expected \(value)") {
+    return satisfy("'\(value)'") {
         $0 == value
     }
 }
@@ -92,8 +93,8 @@ public func expect<T: Equatable>(_ value: T) -> Parser<T, T>{
 /// - Returns: Parser of the same type as the input stream
 ///
 public func expectText<T: CustomStringConvertible>(_ value: T) -> Parser<T, T>{
-    return satisfy("expected \(value)") {
-        String($0) == String(value)
+    return satisfy("text '\(value)'") {
+        String(describing:$0) == String(describing:value)
     }
 }
 
@@ -128,7 +129,7 @@ public func item<T>(_ expected: String) -> Parser<T, T> {
  - Returns: wrapped parser of the same type
  
  */
-public func wrap<T,O>(_ parser: () -> Parser<T,O>) -> Parser<T,O> {
+public func wrap<T,O>(_ parser: @escaping () -> Parser<T,O>) -> Parser<T,O> {
     return Parser {
         input in return parser().parse(input)
     }

@@ -56,7 +56,7 @@ public func optionFlag<T,O>(_ parser: Parser<T,O>) -> Parser<T, Bool> {
 ///                           g (OK (v,inp’)) = f v inp’
 ///                           g other         = other
 ///
-public func into<A,B,T>(_ parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<T,B> {
+public func into<A,B,T>(_ parser: Parser<T,A>, _ f: @escaping ((A)->Parser<T,B>)) -> Parser<T,B> {
     return Parser{
         input in
         let result = parser.parse(input)
@@ -77,7 +77,7 @@ public func into<A,B,T>(_ parser: Parser<T,A>, _ f: (A->Parser<T,B>)) -> Parser<
 ///     using :: parser * ** -> (** -> ***) -> parser * ***
 ///     p $using f = p $into \v. succeed (f v)
 ///
-public func using<T,A,B> (_ parser: Parser<T,A>, _ transform: A->B) -> Parser<T,B> {
+public func using<T,A,B> (_ parser: Parser<T,A>, _ transform: @escaping (A)->B) -> Parser<T,B> {
     return into(parser) {
         value in
         return succeed(transform(value))

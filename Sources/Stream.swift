@@ -17,7 +17,7 @@ public struct Stream<Element>: CustomStringConvertible {
 
     /// Initializes the stream with a function `step()` which fetches elements
     /// from the wrapped stream
-    init(_ step: () -> (head: Element, tail: Stream<Element>)) {
+    init(_ step: @escaping () -> (head: Element, tail: Stream<Element>)) {
         self.step = step
     }
 
@@ -65,7 +65,8 @@ public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
             return CollectionStreamer(self.collection, self.empty, self.index)
         }
         else {
-            return CollectionStreamer(self.collection, self.empty, self.index.successor())
+            return CollectionStreamer(self.collection, self.empty,
+   									  self.collection.index(self.index, offsetBy: 1))
         }
     }
 

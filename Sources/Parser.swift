@@ -13,12 +13,12 @@
 //===----------------------------------------------------------------------===//
 
 /// Parsing error with error message
-public enum ParserError: ErrorProtocol, CustomStringConvertible {
+public enum ParserError: Error, CustomStringConvertible {
     case Error(String)
 
     public var description: String {
         switch self {
-        case Error(let s): return s
+			case .Error(let s): return "Parser error: \(s)"
         }
     }
 }
@@ -41,7 +41,7 @@ public enum Result<V,T>: CustomStringConvertible, ResultType {
 
     public var description: String {
         switch self {
-        case .OK(let value): return String(value)
+		case .OK(let value): return String(describing: value)
         case .Fail(let error): return "Fail: \(error)"
         case .Error(let error): return "Error: \(error)"
         }
@@ -66,12 +66,12 @@ public struct Parser<I: EmptyCheckable, O>: ParserType {
     public typealias Input = I
     public typealias Output = O
 
-    var fun: Stream<Input> -> Result<(Output,Stream<Input>),Input>
+    var fun: (Stream<Input>) -> Result<(Output,Stream<Input>),Input>
 
     /// Initializes the parser with a fuction `parse` which takes an input stream
     /// and produces a parser result wit the output value and advanced stream
     /// state.
-    public init(_ parse: Stream<Input> -> Result<(Output,Stream<Input>),Input>) {
+    public init(_ parse: @escaping (Stream<Input>) -> Result<(Output,Stream<Input>),Input>) {
         self.fun = parse
     }
 

@@ -16,7 +16,7 @@
 ///
 /// - Returns: Parser of the same type as the `value`
 public func succeed<T,O>(_ value: O) -> Parser<T, O> {
-    return Parser { Result.OK(value, $0) }
+    return Parser { input in Result.OK((value, input)) }
 }
 
 

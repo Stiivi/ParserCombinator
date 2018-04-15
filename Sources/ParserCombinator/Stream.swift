@@ -41,7 +41,7 @@ public struct Stream<Element>: CustomStringConvertible {
 /// Wrapper for a collection to provide streaming context
 public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
     // TODO: make Element:EmptyCheckable
-    typealias Element = T.Generator.Element
+    typealias Element = T.Iterator.Element
     let index: T.Index
     let collection: T
     let empty: Element
@@ -52,7 +52,7 @@ public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
     ///     - empty: value representing an empty element. This value is yielded
     ///       when end of the collection is reached.
     ///     - index: optional startin index for streaming
-    init(_ collection: T, _ empty: Element,_ index: T.Index?=nil){
+    init(_ collection: T, empty: Element,index: T.Index?=nil){
         self.index = index ?? collection.startIndex
         self.collection = collection
         self.empty = empty
@@ -62,11 +62,14 @@ public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
     /// collection.
     func next() -> CollectionStreamer {
         if self.index == self.collection.endIndex {
-            return CollectionStreamer(self.collection, self.empty, self.index)
+            return CollectionStreamer(self.collection,
+                                      empty: self.empty,
+                                      index: self.index)
         }
         else {
-            return CollectionStreamer(self.collection, self.empty,
-   									  self.collection.index(self.index, offsetBy: 1))
+            return CollectionStreamer(self.collection,
+                                      empty: self.empty,
+   									  index: self.collection.index(self.index, offsetBy: 1))
         }
     }
 
@@ -106,6 +109,7 @@ public protocol StreamConvertible {
 extension Collection where Iterator.Element: EmptyCheckable {
     public typealias StreamElement = Iterator.Element
     public func stream() -> Stream<StreamElement> {
-        return CollectionStreamer(self, StreamElement.EmptyValue).stream()
+        return CollectionStreamer(self, 
+                                  empty: StreamElement.EmptyValue).stream()
     }
 }

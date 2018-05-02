@@ -11,13 +11,13 @@
 /// Token enum might have a case `.Empty` that would be it's `emptyValue`.
 /// Empty values are used to check end of the input stream.
 public protocol EmptyCheckable {
-    static var EmptyValue: Self { get }
+    static var emptyValue: Self { get }
     var isEmpty: Bool { get }
 }
 
 /// Makes optional to respond to `isEmpty`.
 extension Optional: EmptyCheckable {
-    public static var EmptyValue: Optional {
+    public static var emptyValue: Optional {
         return nil
     }
     /// - Returns: `true` when the receiver is nil. No unwrapping is done
@@ -28,7 +28,7 @@ extension Optional: EmptyCheckable {
 
 /// Makes optional to respond to `isEmpty`.
 extension Character: EmptyCheckable {
-    public static var EmptyValue: Character {
+    public static var emptyValue: Character {
         return "\0"
     }
     /// - Returns: `true` when the receiver is "\0".
@@ -39,7 +39,7 @@ extension Character: EmptyCheckable {
 
 /// Claims `String` to have `isEmpty`. Primarily for `succeed(String)`
 extension String: EmptyCheckable {
-    public static var EmptyValue: String {
+    public static var emptyValue: String {
         return ""
     }
 }

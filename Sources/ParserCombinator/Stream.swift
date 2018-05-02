@@ -38,6 +38,7 @@ public struct Stream<Element>: CustomStringConvertible {
     }
 }
 
+
 /// Wrapper for a collection to provide streaming context
 public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
     // TODO: make Element:EmptyCheckable
@@ -61,33 +62,33 @@ public struct CollectionStreamer<T: Collection>: CustomStringConvertible {
     /// Returns "tail" of the streamer – streamer that represents rest of the
     /// collection.
     func next() -> CollectionStreamer {
-        if self.index == self.collection.endIndex {
-            return CollectionStreamer(self.collection,
-                                      empty: self.empty,
-                                      index: self.index)
+        if index == collection.endIndex {
+            return CollectionStreamer(collection,
+                                      empty: empty,
+                                      index: index)
         }
         else {
-            return CollectionStreamer(self.collection,
-                                      empty: self.empty,
-   									  index: self.collection.index(self.index, offsetBy: 1))
+            return CollectionStreamer(collection,
+                                      empty: empty,
+   									  index: collection.index(index, offsetBy: 1))
         }
     }
 
     /// Method for the `Stream`
     func step() -> (head:Element, tail:Stream<Element>) {
-        if self.index == self.collection.endIndex {
-            return (head:self.empty, tail:Stream(self.step))
+        if index == collection.endIndex {
+            return (head:empty, tail:Stream(step))
         }
         else {
-            let head: Element = self.collection[self.index]
-            return (head:head, tail:Stream(self.next().step))
+            let head: Element = collection[index]
+            return (head:head, tail:Stream(next().step))
         }
     }
 
     /// Create a stream from teh collection streamer
     /// - Returns: Stream wrappign the receiver.
     func stream() -> Stream<Element> {
-        return Stream(self.step)
+        return Stream(step)
     }
 
     public var description: String {
@@ -110,6 +111,6 @@ extension Collection where Iterator.Element: EmptyCheckable {
     public typealias StreamElement = Iterator.Element
     public func stream() -> Stream<StreamElement> {
         return CollectionStreamer(self, 
-                                  empty: StreamElement.EmptyValue).stream()
+                                  empty: StreamElement.emptyValue).stream()
     }
 }
